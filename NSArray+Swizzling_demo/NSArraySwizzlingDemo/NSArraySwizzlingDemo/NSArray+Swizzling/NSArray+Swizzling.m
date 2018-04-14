@@ -15,10 +15,14 @@
     
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
+        //__NSArrayI 是不可变数组
+        //__NSArrayM 是可变数组
+        //此处为使用objectAtIndex：方法造成的Crash；例：[array objectAtIndex:3];
         Method fromMethod_I = class_getInstanceMethod(objc_getClass("__NSArrayI"), @selector(objectAtIndex:));
         Method toMethod_I = class_getInstanceMethod(objc_getClass("__NSArrayI"), @selector(jw_objectAtIndex:));
         method_exchangeImplementations(fromMethod_I, toMethod_I);
         
+        //此处为使用array[2]造成的Crash；
         Method fromMethod_I_Sub = class_getInstanceMethod(objc_getClass("__NSArrayI"), @selector(objectAtIndexedSubscript:));
         Method toMethod_I_Sub = class_getInstanceMethod(objc_getClass("__NSArrayI"), @selector(jw_objectAtIndexedSubscript:));
         method_exchangeImplementations(fromMethod_I_Sub, toMethod_I_Sub);
